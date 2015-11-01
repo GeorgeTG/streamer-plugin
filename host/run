@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 import struct
-import sys
+import sys, os
 import json
 
 from LivestreamerWrapper import LivestreamerAsync, LivestreamerError
@@ -26,7 +26,9 @@ def return_success(action):
     send_message(json.dumps(result))
 
 def read_func():
-    with open('log.txt', 'w') as f:
+    log_path = os.path.dirname(__file__)
+    log_path = os.path.join(log_path, "run.log")
+    with open(log_path, 'w') as f:
         try:
             #read 32bits, the length of the message as defined in spec.
             text_length_bytes = sys.stdin.read(4)
@@ -35,33 +37,36 @@ def read_func():
             text_length = struct.unpack('i', text_length_bytes)[0]
             text = sys.stdin.read(text_length).decode('utf-8')
             ###########################################################
-
+            
+            #get requested action
             json_obj = json.loads(text)
             action = json_obj["action"]
+            url = json_obj["args"]["url"]
             if action == "getQuality":
-                quality_list = LivestreamerAsync.get_available_quality(json_obj["args"]["url"])
+                quality_list = LivestreamerAsync.get_available_quality(url)
                 if not quality_list:
                     return_error("Failed to get quality list")
                 else:
                     result = {
                         'result': True,
                         'data': quality_list.keys(),
-                        'action': json_obj["action"]
+                        'action': action
                     }
                     send_message(json.dumps(result))
             elif action == "startStream":
-                streamer = LivestreamerAsync(json_obj["args"]["url"])
-                streamer.start_streamer(json_obj["args"]["quality"])
-                return_success(json_obj['action'])
+                quality = json_obj["args"]["quality"]
+                streamer = LivestreamerAsync(url)
+                if streamer.start_streamer(quality):
+                    return_success(action)
+                else:
+                    return_error("Cannot start stream")
         except LivestreamerError as err:
-            return_error(err.message)
+            f.write("error:" + str(err) + "\n")
+            return_error(str(err))
         except Exception as ex:
-            result = {
-                    'result': False
-                    }
-            send_message(json.dumps(result))
-
             f.write("error:" + str(ex) + "\n")
+            return_error(str(ex))
+
 def main():
     read_func()
     sys.exit(0)

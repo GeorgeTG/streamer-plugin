@@ -88,7 +88,8 @@ class LivestreamerAsync(object):
         if not self._streams:
             return False
         if quality not in self._streams.keys():
-            return False
+            raise LivestreamerError("Bad quality selection: %s" % quality)
+
         p = Process(target = start_streaming, args=(self._streams[quality], 5))
         p.start()
         return True
@@ -117,4 +118,6 @@ class LivestreamerAsync(object):
             raise LivestreamerError("No plugin for this url")
         except livestreamer.PluginError as err:
             raise LivestreamerError(str(err))
+        except Exception as ex:
+            raise LivestreamerError(str(ex))
 

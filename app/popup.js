@@ -59,7 +59,7 @@ function getQuality(url) {
 
 function getQualityCallback(response) {
   if (typeof response == "undefined") {
-    renderError("Erorr. Bad response from native App");
+    renderError("Bad response from native App");
     return;
   }
   if (response.result == true) {
