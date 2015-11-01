@@ -1,0 +1,9 @@
+{
+    "name": "livestreamer_launcher",
+    "description": "Livestreamer launcher",
+    "path": "/home/georgetg/.livestreamer_chrome_host/run",
+    "type": "stdio",
+    "allowed_origins": [
+        "chrome-extension://anbhbobflmjpehpmofccmpggcmndgioe/"
+    ]
+}

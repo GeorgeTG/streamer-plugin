@@ -1,0 +1,22 @@
+{
+    "manifest_version": 2,
+
+    "name": "livestreamer-chrome",
+    "description": "Opens the stream of the current tab in VLC!",
+    "version": "0.3",
+    "icons" : {
+        "256": "icon256.png",
+        "512": "icon512.png"
+    },
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_popup": "popup.html",
+        "default_title": "Open in VLC"
+    },
+
+    "permissions": [
+        "activeTab",
+        "nativeMessaging",
+        "https://ajax.googleapis.com/"
+    ]
+}

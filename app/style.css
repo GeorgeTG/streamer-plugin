@@ -1,0 +1,35 @@
+body {
+  font-family: "Raleway", "Lucida Grande", Tahoma, sans-serif;
+  font-size: 100%;
+}
+#status {
+  white-space: pre;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 400px;
+}
+
+#error_container img {
+  width: 10%;
+  height: 10%;
+  float: left;
+  display: none;
+}
+
+#error {
+  white-space: pre;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 400px;
+  color:red;
+  margin-top:2px;
+  float: right;
+}
+
+#launch_button{
+  display: none;
+}
+#quality_selector{
+  display: none;
+}
+

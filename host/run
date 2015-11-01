@@ -1,0 +1,70 @@
+#!/usr/bin/env python2
+import struct
+import sys
+import json
+
+from LivestreamerWrapper import LivestreamerAsync, LivestreamerError
+
+def send_message(message):
+    #write 32bits length and then message
+    sys.stdout.write(struct.pack('I', len(message)))
+    sys.stdout.write(message)
+    sys.stdout.flush()
+
+def return_error(error):
+    result = {
+            'result': False,
+            'message': error
+            }
+    send_message(json.dumps(result))
+
+def return_success(action):
+    result = {
+            'result': True,
+            'action': action
+            }
+    send_message(json.dumps(result))
+
+def read_func():
+    with open('log.txt', 'w') as f:
+        try:
+            #read 32bits, the length of the message as defined in spec.
+            text_length_bytes = sys.stdin.read(4)
+            if len(text_length_bytes) == 0:
+                sys.exit(0)
+            text_length = struct.unpack('i', text_length_bytes)[0]
+            text = sys.stdin.read(text_length).decode('utf-8')
+            ###########################################################
+
+            json_obj = json.loads(text)
+            action = json_obj["action"]
+            if action == "getQuality":
+                quality_list = LivestreamerAsync.get_available_quality(json_obj["args"]["url"])
+                if not quality_list:
+                    return_error("Failed to get quality list")
+                else:
+                    result = {
+                        'result': True,
+                        'data': quality_list.keys(),
+                        'action': json_obj["action"]
+                    }
+                    send_message(json.dumps(result))
+            elif action == "startStream":
+                streamer = LivestreamerAsync(json_obj["args"]["url"])
+                streamer.start_streamer(json_obj["args"]["quality"])
+                return_success(json_obj['action'])
+        except LivestreamerError as err:
+            return_error(err.message)
+        except Exception as ex:
+            result = {
+                    'result': False
+                    }
+            send_message(json.dumps(result))
+
+            f.write("error:" + str(ex) + "\n")
+def main():
+    read_func()
+    sys.exit(0)
+ 
+if __name__ == '__main__':
+    main()
