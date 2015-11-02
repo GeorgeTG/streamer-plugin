@@ -9,12 +9,16 @@
   <body>
     <div class="controls">
       <div id="status"></div>
-      <select id="quality_selector"></select>
-      <button id="launch_button">Open in VLC</button>
-      <div id="error_container">
+      <div class="divider"><div class="mask"></div></div>
+      <div id="stream_controls">
+        <select class="styled" id="quality_selector"></select>
+        <a href="#" class="styled" id="launch_button">Open in VLC</a>
+      </div>
+      <div class="error_area">
         <img id="error_img" src='error.png' alt="error"/>
         <div id="error"></div>
       </div>
+      <img id="spinner" src="spinner.gif" alt="Loading..."/>
     </div>
   </body>
 </html>

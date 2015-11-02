@@ -21,6 +21,14 @@ function init() {
   }
 }
 
+function show_spinner(){
+  $("spinner").style.display = "block";
+}
+
+function hide_spinner(){
+  $("spinner").style.display = "none";
+}
+
 function getCurrentTabUrl(callback) {
   var queryInfo = {
     active: true,
@@ -41,7 +49,7 @@ function renderStatus(statusText) {
 
 function renderError(statusText) {
   $('error').textContent = "Error: " + statusText;
-  $('error_img').style.display = "block";
+  $('error_img').style.display = "inline";
 }
 
 function getQuality(url) {
@@ -54,10 +62,12 @@ function getQuality(url) {
       },
       getQualityCallback
     );
+  show_spinner();
   renderStatus("Getting available quality options...")
 }
 
 function getQualityCallback(response) {
+  hide_spinner();
   if (typeof response == "undefined") {
     renderError("Bad response from native App");
     return;
@@ -73,9 +83,8 @@ function getQualityCallback(response) {
       select.appendChild(opt);
     }
     select.selectedIndex = len - 1;
-    $("quality_selector").style.display = "block";
-    $("launch_button").style.display = "block";
     renderStatus("Select qaulity:");
+    $("stream_controls").style.display = "block";
   } else {
     renderError(response.message);
   }
@@ -93,12 +102,14 @@ function startStream(url, quality) {
       },
       startStreamCallback
     );
+  show_spinner();
   renderStatus("Trying to start stream...");
 }
 
 function startStreamCallback(response) {
+  hide_spinner();
   if (typeof response == "undefined") {
-    renderError("Erorr. Bad response from native App");
+    renderError("Bad response from native App");
     return;
   }
   if (response.result == true) {
